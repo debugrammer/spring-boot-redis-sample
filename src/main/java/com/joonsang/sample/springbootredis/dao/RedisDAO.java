@@ -43,10 +43,10 @@ public class RedisDAO {
     private final ObjectMapper messagePackObjectMapper;
 
     public RedisDAO(
-            @Qualifier("redisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
-            @Qualifier("stringRedisTemplate") StringRedisTemplate stringRedisTemplate,
-            @Qualifier("messagePackRedisTemplate") RedisTemplate<String, byte[]> messagePackRedisTemplate,
-            @Qualifier("messagePackObjectMapper") ObjectMapper messagePackObjectMapper
+        @Qualifier("redisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
+        @Qualifier("stringRedisTemplate") StringRedisTemplate stringRedisTemplate,
+        @Qualifier("messagePackRedisTemplate") RedisTemplate<String, byte[]> messagePackRedisTemplate,
+        @Qualifier("messagePackObjectMapper") ObjectMapper messagePackObjectMapper
     ) {
 
         this.redisConnectionFactory = redisConnectionFactory;
@@ -57,8 +57,8 @@ public class RedisDAO {
 
     public boolean isUserBlocked(String username) {
         String key = StringSubstitutor.replace(
-                BLOCKED_USER_KEY,
-                ImmutableMap.of("USERNAME", username)
+            BLOCKED_USER_KEY,
+            ImmutableMap.of("USERNAME", username)
         );
 
         Boolean hasKey = stringRedisTemplate.hasKey(key);
@@ -68,8 +68,8 @@ public class RedisDAO {
 
     public long getUserBlockedSecondsLeft(String username) {
         String key = StringSubstitutor.replace(
-                BLOCKED_USER_KEY,
-                ImmutableMap.of("USERNAME", username)
+            BLOCKED_USER_KEY,
+            ImmutableMap.of("USERNAME", username)
         );
 
         Long secondsLeft = stringRedisTemplate.getExpire(key, TimeUnit.SECONDS);
@@ -79,8 +79,8 @@ public class RedisDAO {
 
     public void setUserBlocked(String username) {
         String key = StringSubstitutor.replace(
-                BLOCKED_USER_KEY,
-                ImmutableMap.of("USERNAME", username)
+            BLOCKED_USER_KEY,
+            ImmutableMap.of("USERNAME", username)
         );
 
         stringRedisTemplate.opsForValue().set(key, StringUtils.EMPTY, 5, TimeUnit.MINUTES);
@@ -88,8 +88,8 @@ public class RedisDAO {
 
     public void deleteUserBlocked(String username) {
         String key = StringSubstitutor.replace(
-                BLOCKED_USER_KEY,
-                ImmutableMap.of("USERNAME", username)
+            BLOCKED_USER_KEY,
+            ImmutableMap.of("USERNAME", username)
         );
 
         stringRedisTemplate.delete(key);
@@ -97,7 +97,7 @@ public class RedisDAO {
 
     public User getUser(String username) throws IOException {
         String key = StringSubstitutor.replace(
-                USER_KEY, ImmutableMap.of("USERNAME", username)
+            USER_KEY, ImmutableMap.of("USERNAME", username)
         );
 
         byte[] message = messagePackRedisTemplate.opsForValue().get(key);
@@ -111,7 +111,7 @@ public class RedisDAO {
 
     public void setUser(User user) throws JsonProcessingException {
         String key = StringSubstitutor.replace(
-                USER_KEY, ImmutableMap.of("USERNAME", user.getUsername())
+            USER_KEY, ImmutableMap.of("USERNAME", user.getUsername())
         );
 
         byte[] message = messagePackObjectMapper.writeValueAsBytes(user);
@@ -121,7 +121,7 @@ public class RedisDAO {
 
     public void deleteUser(String username) {
         String key = StringSubstitutor.replace(
-                USER_KEY, ImmutableMap.of("USERNAME", username)
+            USER_KEY, ImmutableMap.of("USERNAME", username)
         );
 
         messagePackRedisTemplate.delete(key);
@@ -129,7 +129,7 @@ public class RedisDAO {
 
     public List<String> getAllUsers() {
         String key = StringSubstitutor.replace(USER_KEY, ImmutableMap.of(
-                "USERNAME", "*"
+            "USERNAME", "*"
         ));
 
         RedisConnection redisConnection = redisConnectionFactory.getConnection();
